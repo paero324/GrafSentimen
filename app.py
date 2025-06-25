@@ -535,6 +535,6 @@ with tab2:
 st.markdown("---")
 st.markdown("""
     <div style='text-align: center'>
-        <p>Built with ❤️ using Streamlit, Scikit-learn, and Plotly</p>
+        <p>GrafSentimen © 2025 • Analisis Sentimen Bahasa Indonesia secara Real-tim </p>
     </div>
     """, unsafe_allow_html=True)
