@@ -2,8 +2,8 @@ import mysql.connector
 
 def get_connection():
     return mysql.connector.connect(
-        host="localhost",         # atau nama host DB kamu
-        user="root",              # user MySQL kamu
-        password="yourpassword",  # password MySQL kamu
-        database="grafsentimen"   # nama database kamu
+        host="localhost",         # Ganti ke nama host server DB kamu
+        user="root",              # Ganti dengan user DB kamu
+        password="",      # Ganti dengan password DB kamu
+        database="grafsentimen"   # Pastikan sesuai nama database kamu
     )
