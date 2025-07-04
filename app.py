@@ -27,6 +27,66 @@ from openpyxl.drawing.image import Image
 from openpyxl.chart import BarChart, Reference
 import tempfile
 
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.email = ""
+
+# FORM LOGIN & REGISTER
+if not st.session_state.logged_in:
+    st.sidebar.header("🔐 Login / Register")
+    form_type = st.sidebar.radio("Pilih Aksi", ["Login", "Register"])
+
+    email = st.sidebar.text_input("Email")
+    password = st.sidebar.text_input("Password", type="password")
+
+    if form_type == "Login":
+        if st.sidebar.button("Login"):
+            try:
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+                user = cursor.fetchone()
+                if user and user["password"] == hash_password(password):
+                    st.session_state.logged_in = True
+                    st.session_state.email = email
+                    st.success("Login berhasil!")
+                    st.experimental_rerun()
+                else:
+                    st.error("Email atau password salah.")
+            except Exception as e:
+                st.error(f"Gagal login: {str(e)}")
+            finally:
+                cursor.close()
+                conn.close()
+
+    elif form_type == "Register":
+        if st.sidebar.button("Register"):
+            try:
+                conn = get_connection()
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
+                if cursor.fetchone():
+                    st.warning("Email sudah terdaftar.")
+                else:
+                    cursor.execute(
+                        "INSERT INTO users (email, password) VALUES (%s, %s)",
+                        (email, hash_password(password))
+                    )
+                    conn.commit()
+                    st.success("Registrasi berhasil! Silakan login.")
+            except Exception as e:
+                st.error(f"Gagal register: {str(e)}")
+            finally:
+                cursor.close()
+                conn.close()
+
+    st.stop()
+
+
+
 # Download required NLTK data
 nltk_data_dir = "./resources/nltk_data_dir/"
 if not os.path.exists(nltk_data_dir):
@@ -535,6 +595,12 @@ with tab2:
 
     else:
         st.info("❌ Please upload a dataset to see the analysis.")
+        
+st.sidebar.caption(f"Login sebagai: {st.session_state.email}")
+if st.sidebar.button("Logout"):
+    st.session_state.logged_in = False
+    st.session_state.email = ""
+    st.experimental_rerun()
 
 # Footer
 st.markdown("---")
