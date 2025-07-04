@@ -9,3 +9,14 @@ PySastrawi
 wordcloud
 plotly
 openpyxl
+streamlit
+pandas
+numpy
+plotly
+nltk
+scikit-learn
+wordcloud
+matplotlib
+openpyxl
+emoji
+mysql-connector-python
