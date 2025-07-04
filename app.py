@@ -1,4 +1,4 @@
-from mysql_config import get_connection
+from mysql_config import get_connection  # pastikan file mysql_config.py ada
 import hashlib
 import streamlit as st
 import os
@@ -226,40 +226,7 @@ def analyze_text_with_model(text):
         }
     }
 
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
 
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-    st.session_state.email = ""
-    st.session_state.role = ""
-
-if not st.session_state.logged_in:
-    st.sidebar.subheader("🔐 Login")
-    email = st.sidebar.text_input("Email")
-    password = st.sidebar.text_input("Password", type="password")
-
-    if st.sidebar.button("Login"):
-        try:
-            conn = get_connection()
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
-            user = cursor.fetchone()
-
-            if user and user["password"] == hash_password(password):
-                st.session_state.logged_in = True
-                st.session_state.email = email
-                st.session_state.role = user["role"]
-                st.success("Login berhasil!")
-                st.experimental_rerun()
-            else:
-                st.error("Email atau password salah.")
-        except Exception as e:
-            st.error(f"Gagal login: {str(e)}")
-        finally:
-            cursor.close()
-            conn.close()
-    st.stop()
 
 
 def load_and_preprocess_dataset(uploaded_file):
